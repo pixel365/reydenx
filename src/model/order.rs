@@ -46,6 +46,7 @@ pub struct Order {
     pub content_type: String,
     pub parameters: Parameters,
     pub statistics: Option<Statistics>,
+    pub content_classification_labels: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
