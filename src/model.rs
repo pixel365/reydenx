@@ -5,4 +5,5 @@ pub mod price;
 pub mod result;
 pub mod task;
 pub mod token;
+pub mod traffic;
 pub mod user;

@@ -213,7 +213,7 @@ pub fn add_views(
 /// fn main() {
 ///     let mut client = Client::new(String::from("EMAIL"), String::from("PASSWORD"));
 ///     if let Ok(client) = client.auth() {
-///         let res = task_status(client, 12345, String::from("TASK_ID"));
+///         let res = task_status(client, 12345, &String::from("TASK_ID"));
 ///         println!("{:#?}", res);
 ///     }
 /// }
