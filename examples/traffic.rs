@@ -12,5 +12,8 @@ fn main() {
 
         let res = traffic::languages(client);
         println!("{:#?}", res);
+
+        let res = traffic::devices(client);
+        println!("{:#?}", res);
     }
 }

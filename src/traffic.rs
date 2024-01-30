@@ -52,3 +52,27 @@ pub fn languages(c: &impl Requests) -> Result<StandardResult<Vec<Traffic>>, Box<
     let res: StandardResult<Vec<Traffic>> = serde_json::from_str(&resp)?;
     Ok(res)
 }
+
+/// Traffic statistics by device type
+///
+/// ```rust,no_run
+/// use reydenx::{
+///     client::{Auth, Client},
+///     traffic,
+/// };
+/// fn main() {
+///     let mut client = Client::new(
+///         String::from("USERNAME"),
+///         String::from("PASSWORD"),
+///     );
+///     if let Ok(client) = client.auth() {
+///         let res = traffic::devices(client);
+///         println!("{:#?}", res);
+///     }
+/// }
+/// ```
+pub fn devices(c: &impl Requests) -> Result<StandardResult<Vec<Traffic>>, Box<dyn Error>> {
+    let resp = c.get("/traffic/devices/")?;
+    let res: StandardResult<Vec<Traffic>> = serde_json::from_str(&resp)?;
+    Ok(res)
+}
