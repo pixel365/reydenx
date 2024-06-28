@@ -16,4 +16,5 @@ pub struct Price {
     pub description: String,
     pub views: MinMaxStep,
     pub online_viewers: MinMaxStep,
+    pub category_id: u32,
 }
