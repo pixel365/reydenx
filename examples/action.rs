@@ -1,9 +1,10 @@
 use reydenx::{
     action::{
-        add_views, cancel, change_increase_time, change_online, disable_increase_of_viewers,
-        enable_increase_of_viewers, run, stop, task_status,
+        add_views, cancel, change_increase_time, change_launch_mode, change_online,
+        disable_increase_of_viewers, enable_increase_of_viewers, run, stop, task_status,
     },
     client::{Auth, Client},
+    model::order::{LaunchMode, LaunchParams},
 };
 
 fn main() {
@@ -35,6 +36,36 @@ fn main() {
         println!("{:#?}", res);
 
         let res = task_status(client, 12345, &String::from("TASK_ID"));
+        println!("{:#?}", res);
+
+        let res = change_launch_mode(
+            client,
+            12345,
+            &LaunchParams {
+                mode: LaunchMode::Auto,
+                delay_time: 0,
+            },
+        );
+        println!("{:#?}", res);
+
+        let res = change_launch_mode(
+            client,
+            12345,
+            &LaunchParams {
+                mode: LaunchMode::Manual,
+                delay_time: 0,
+            },
+        );
+        println!("{:#?}", res);
+
+        let res = change_launch_mode(
+            client,
+            12345,
+            &LaunchParams {
+                mode: LaunchMode::Delay,
+                delay_time: 15,
+            },
+        );
         println!("{:#?}", res);
     }
 }

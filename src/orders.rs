@@ -310,7 +310,7 @@ pub fn create_twitch_stream(
 ) -> Result<ActionResult, Box<dyn Error>> {
     let payload = serde_json::to_string(payload)?;
     let resp = c.post(
-        &format!("/orders/create/{}/stream/", Platform::Twitch.slug()),
+        &format!("/orders/create/{}/stream/", Platform::Twitch),
         payload,
     )?;
     let res: ActionResult = serde_json::from_str(&resp)?;
@@ -359,7 +359,7 @@ pub fn create_youtube_stream(
 ) -> Result<ActionResult, Box<dyn Error>> {
     let payload = serde_json::to_string(payload)?;
     let resp = c.post(
-        &format!("/orders/create/{}/stream/", Platform::YouTube.slug()),
+        &format!("/orders/create/{}/stream/", Platform::YouTube),
         payload,
     )?;
     let res: ActionResult = serde_json::from_str(&resp)?;

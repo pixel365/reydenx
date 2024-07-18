@@ -31,7 +31,7 @@ pub fn get_prices(
     c: &impl Requests,
     platform: Platform,
 ) -> Result<StandardResult<Vec<Price>>, Box<dyn Error>> {
-    let resp = c.get(&format!("/prices/{}/", platform.slug()))?;
+    let resp = c.get(&format!("/prices/{}/", platform))?;
     let res: StandardResult<Vec<Price>> = serde_json::from_str(&resp)?;
     Ok(res)
 }

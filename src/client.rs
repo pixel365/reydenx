@@ -30,7 +30,7 @@ pub trait Requests {
 
     fn delete(&self, path: &str) -> Result<String, Box<dyn Error>>;
 
-    fn patch(&self, path: &str) -> Result<String, Box<dyn Error>>;
+    fn patch(&self, path: &str, payload: Option<String>) -> Result<String, Box<dyn Error>>;
 }
 
 pub trait Auth<T> {
@@ -167,15 +167,15 @@ impl Requests for Client {
         self.request(reqwest::Method::GET, path, None)
     }
 
-    fn post(&self, path: &str, _payload: String) -> Result<String, Box<dyn Error>> {
-        self.request(reqwest::Method::POST, path, None)
+    fn post(&self, path: &str, payload: String) -> Result<String, Box<dyn Error>> {
+        self.request(reqwest::Method::POST, path, Some(payload))
     }
 
     fn delete(&self, path: &str) -> Result<String, Box<dyn Error>> {
         self.request(reqwest::Method::DELETE, path, None)
     }
 
-    fn patch(&self, path: &str) -> Result<String, Box<dyn Error>> {
-        self.request(reqwest::Method::PATCH, path, None)
+    fn patch(&self, path: &str, payload: Option<String>) -> Result<String, Box<dyn Error>> {
+        self.request(reqwest::Method::PATCH, path, payload)
     }
 }

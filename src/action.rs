@@ -2,11 +2,15 @@ use std::error::Error;
 
 use crate::{
     client::Requests,
-    model::{result::ActionResult, task::TaskStatus},
+    model::{order::LaunchParams, result::ActionResult, task::TaskStatus},
 };
 
-fn patch(c: &impl Requests, path: &str) -> Result<ActionResult, Box<dyn Error>> {
-    let resp = c.patch(path)?;
+fn patch(
+    c: &impl Requests,
+    path: &str,
+    payload: Option<String>,
+) -> Result<ActionResult, Box<dyn Error>> {
+    let resp = c.patch(path, payload)?;
     let res: ActionResult = serde_json::from_str(&resp)?;
     Ok(res)
 }
@@ -28,7 +32,7 @@ fn patch(c: &impl Requests, path: &str) -> Result<ActionResult, Box<dyn Error>> 
 /// }
 /// ```
 pub fn run(c: &impl Requests, order_id: u32) -> Result<ActionResult, Box<dyn Error>> {
-    self::patch(c, &format!("/orders/{}/action/run/", order_id))
+    self::patch(c, &format!("/orders/{}/action/run/", order_id), None)
 }
 
 /// Stop order
@@ -48,7 +52,7 @@ pub fn run(c: &impl Requests, order_id: u32) -> Result<ActionResult, Box<dyn Err
 /// }
 /// ```
 pub fn stop(c: &impl Requests, order_id: u32) -> Result<ActionResult, Box<dyn Error>> {
-    self::patch(c, &format!("/orders/{}/action/stop/", order_id))
+    self::patch(c, &format!("/orders/{}/action/stop/", order_id), None)
 }
 
 /// Cancel order
@@ -68,7 +72,7 @@ pub fn stop(c: &impl Requests, order_id: u32) -> Result<ActionResult, Box<dyn Er
 /// }
 /// ```
 pub fn cancel(c: &impl Requests, order_id: u32) -> Result<ActionResult, Box<dyn Error>> {
-    self::patch(c, &format!("/orders/{}/action/cancel/", order_id))
+    self::patch(c, &format!("/orders/{}/action/cancel/", order_id), None)
 }
 
 /// Change online viewers for order
@@ -95,6 +99,7 @@ pub fn change_online(
     self::patch(
         c,
         &format!("/orders/{}/action/change/online/{}/", order_id, value),
+        None,
     )
 }
 
@@ -122,6 +127,7 @@ pub fn change_increase_time(
     self::patch(
         c,
         &format!("/orders/{}/action/increase/change/{}/", order_id, value),
+        None,
     )
 }
 
@@ -149,6 +155,7 @@ pub fn enable_increase_of_viewers(
     self::patch(
         c,
         &format!("/orders/{}/action/increase/on/{}/", order_id, value),
+        None,
     )
 }
 
@@ -172,7 +179,11 @@ pub fn disable_increase_of_viewers(
     c: &impl Requests,
     order_id: u32,
 ) -> Result<ActionResult, Box<dyn Error>> {
-    self::patch(c, &format!("/orders/{}/action/increase/off/", order_id))
+    self::patch(
+        c,
+        &format!("/orders/{}/action/increase/off/", order_id),
+        None,
+    )
 }
 
 /// Add views to order
@@ -199,6 +210,7 @@ pub fn add_views(
     self::patch(
         c,
         &format!("/orders/{}/action/add/views/{}/", order_id, value),
+        None,
     )
 }
 
@@ -226,4 +238,41 @@ pub fn task_status(
     let resp = c.get(&format!("/orders/{}/task/{}/status/", order_id, task_id))?;
     let res: TaskStatus = serde_json::from_str(&resp)?;
     Ok(res)
+}
+
+/// Change launch mode
+///
+/// ```rust, no_run
+/// use reydenx::{
+///     action::change_launch_mode,
+///     client::{Auth, Client},
+///     model::order::{LaunchMode, LaunchParams},
+/// };
+///
+/// fn main() {
+///     let mut client = Client::new(String::from("EMAIL"), String::from("PASSWORD"));
+///     if let Ok(client) = client.auth() {
+///         let res = change_launch_mode(
+///             client,
+///             12345,
+///             &LaunchParams {
+///                 mode: LaunchMode::Delay,
+///                 delay_time: 15,
+///             },
+///         );
+///         println!("{:#?}", res);
+///     }
+/// }
+/// ```
+pub fn change_launch_mode(
+    c: &impl Requests,
+    order_id: u32,
+    params: &LaunchParams,
+) -> Result<ActionResult, Box<dyn Error>> {
+    let payload = serde_json::to_string(params)?;
+    self::patch(
+        c,
+        &format!("/orders/{}/action/change/launch/", order_id),
+        Some(payload),
+    )
 }

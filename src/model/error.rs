@@ -1,7 +1,7 @@
 use std::fmt::{self, Display, Formatter};
 
 use reqwest::StatusCode;
-use serde::{Deserialize, Serialize};
+use serde::{ser, Deserialize, Serialize};
 
 #[derive(Debug)]
 pub struct ResponseError {
@@ -22,3 +22,24 @@ impl Display for ResponseError {
 }
 
 impl std::error::Error for ResponseError {}
+
+#[derive(Debug)]
+pub struct ValueError {
+    pub message: String,
+}
+
+impl Display for ValueError {
+    fn fmt(&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "{:?}", self.message)
+    }
+}
+
+impl std::error::Error for ValueError {}
+
+impl ser::Error for ValueError {
+    fn custom<T: Display>(msg: T) -> Self {
+        ValueError {
+            message: msg.to_string(),
+        }
+    }
+}

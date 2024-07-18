@@ -1,4 +1,41 @@
-use serde::{Deserialize, Serialize};
+use std::fmt;
+
+use serde::{
+    ser::{Error, SerializeStruct},
+    Deserialize, Serialize,
+};
+
+use super::error::ValueError;
+
+#[derive(Deserialize, Debug)]
+pub enum LaunchMode {
+    Auto,
+    Manual,
+    Delay,
+}
+
+impl Serialize for LaunchMode {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match &self {
+            LaunchMode::Auto => serializer.serialize_str("auto"),
+            LaunchMode::Manual => serializer.serialize_str("manual"),
+            LaunchMode::Delay => serializer.serialize_str("delay"),
+        }
+    }
+}
+
+impl fmt::Display for LaunchMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match &self {
+            LaunchMode::Auto => write!(f, "auto"),
+            LaunchMode::Manual => write!(f, "manual"),
+            LaunchMode::Delay => write!(f, "delay"),
+        }
+    }
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Parameters {
@@ -119,4 +156,37 @@ pub struct YouTubePayload {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Identifiers {
     pub identifiers: Vec<u32>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct LaunchParams {
+    pub mode: LaunchMode,
+    pub delay_time: u8,
+}
+
+impl Serialize for LaunchParams {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut s = serializer.serialize_struct("LaunchParams", 2)?;
+        match self.mode {
+            LaunchMode::Delay => {
+                if self.delay_time < 5 || self.delay_time > 240 {
+                    return Err(ValueError {
+                        message: String::from(
+                            "The number of minutes for delayed start should be from 5 to 240",
+                        ),
+                    })
+                    .map_err(S::Error::custom);
+                }
+                s.serialize_field("delay_time", &self.delay_time)?;
+            }
+            _ => {
+                s.serialize_field("delay_time", &0)?;
+            }
+        }
+        s.serialize_field("mode", &self.mode)?;
+        s.end()
+    }
 }
