@@ -11,6 +11,7 @@ use crate::{
         result::{ActionResult, StandardResult},
     },
 };
+use crate::model::order::KickPayload;
 
 /// Return list of orders
 ///
@@ -298,6 +299,8 @@ pub fn payments(
 ///                 },
 ///                 delay_time: 0,
 ///                 twitch_id: 123456789,
+///                 fixed_allocation: 0,
+///                 on_overflow: false,
 ///             },
 ///         );
 ///         println!("{:#?}", res);
@@ -347,6 +350,8 @@ pub fn create_twitch_stream(
 ///                 channel_url: String::from(
 ///                     "https://www.youtube.com/channel/UCtI0Hodo5o5dUb67FeUjDeA",
 ///                 ),
+///                 fixed_allocation: 0,
+///                 on_overflow: false,
 ///             },
 ///         );
 ///         println!("{:#?}", res);
@@ -360,6 +365,58 @@ pub fn create_youtube_stream(
     let payload = serde_json::to_string(payload)?;
     let resp = c.post(
         &format!("/orders/create/{}/stream/", Platform::YouTube),
+        payload,
+    )?;
+    let res: ActionResult = serde_json::from_str(&resp)?;
+    Ok(res)
+}
+
+/// Create new order for Kick stream
+///
+/// ```rust,no_run
+/// use reydenx::{
+///     client::{Auth, Client},
+///     model::order::{SmoothGain, YouTubePayload},
+///     orders::create_kick_stream,
+/// };
+///
+/// fn main() {
+///     use reydenx::model::order::KickPayload;
+/// let mut client = Client::new(
+///         String::from("USERNAME"),
+///         String::from("PASSWORD"),
+///     );
+///     if let Ok(client) = client.auth() {
+///         let res = create_kick_stream(
+///             client,
+///             &KickPayload {
+///                 price_id: 123,
+///                 number_of_views: 1000,
+///                 number_of_viewers: 100,
+///                 launch_mode: String::from("auto"),
+///                 smooth_gain: SmoothGain {
+///                     enabled: false,
+///                     minutes: 0,
+///                 },
+///                 delay_time: 0,
+///                 channel_url: String::from(
+///                     "https://kick.com/channel",
+///                 ),
+///                 fixed_allocation: 0,
+///                 on_overflow: false,
+///             },
+///         );
+///         println!("{:#?}", res);
+///     }
+/// }
+/// ```
+pub fn create_kick_stream(
+    c: &impl Requests,
+    payload: &KickPayload,
+) -> Result<ActionResult, Box<dyn Error>> {
+    let payload = serde_json::to_string(payload)?;
+    let resp = c.post(
+        &format!("/orders/create/{}/stream/", Platform::Kick),
         payload,
     )?;
     let res: ActionResult = serde_json::from_str(&resp)?;

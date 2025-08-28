@@ -7,6 +7,7 @@ pub enum Platform {
     GoodGame,
     Trovo,
     VkPlay,
+    Kick,
 }
 
 impl Display for Platform {
@@ -17,6 +18,7 @@ impl Display for Platform {
             Platform::GoodGame => write!(f, "goodgame"),
             Platform::Trovo => write!(f, "trovo"),
             Platform::VkPlay => write!(f, "vkplay"),
+            Platform::Kick => write!(f, "kick"),
         }
     }
 }

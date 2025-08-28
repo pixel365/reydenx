@@ -140,6 +140,8 @@ pub struct TwitchPayload {
     pub smooth_gain: SmoothGain,
     pub delay_time: u32,
     pub twitch_id: u32,
+    pub fixed_allocation: u32,
+    pub on_overflow: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -151,6 +153,21 @@ pub struct YouTubePayload {
     pub smooth_gain: SmoothGain,
     pub delay_time: u32,
     pub channel_url: String,
+    pub fixed_allocation: u32,
+    pub on_overflow: bool,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct KickPayload {
+    pub price_id: u32,
+    pub number_of_views: u32,
+    pub number_of_viewers: u32,
+    pub launch_mode: String,
+    pub smooth_gain: SmoothGain,
+    pub delay_time: u32,
+    pub channel_url: String,
+    pub fixed_allocation: u32,
+    pub on_overflow: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
